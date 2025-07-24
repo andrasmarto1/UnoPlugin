@@ -1,0 +1,63 @@
+{
+	"Name": "Overlays.uno",
+	"Version": "0.1.0.0",
+	"Author": "Singular.live",
+	"Actions": [
+		{
+			"Name": "Uno Control",
+			"UUID": "uno.overlays.v2.uno-control",
+			"Icon": "Action Image",
+			"Tooltip": "Control your overlays with the press of a button.",
+			"PropertyInspectorPath": "ui/index.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "Key Icon",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Uno Control (Dial)",
+			"UUID": "uno.overlays.v2.uno-control-dial",
+			"Icon": "Action Image",
+			"Tooltip": "Control your overlays with Streamdeck+ dials.",
+			"PropertyInspectorPath": "ui/index.html",
+			"Controllers": [
+				"Encoder"
+			],
+			"States": [
+				{
+					"Image": "Key Icon",
+					"TitleAlignment": "bottom"
+				}
+			]
+		}
+	],
+	"Category": "Overlays.uno",
+	"CategoryIcon": "Action Image",
+	"CodePath": "bin/plugin.js",
+	"Description": "This is the Streamdeck plugin for overlays.uno. Control your overlays directly from your Streamdeck device!",
+	"Icon": "Category Icon",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.5"
+	},
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "12"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "enabled"
+	},
+	"UUID": "uno.overlays.v2"
+}

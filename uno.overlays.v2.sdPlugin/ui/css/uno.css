@@ -1,0 +1,193 @@
+.app-token-entry {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+#app-token {
+  border: 1px transparent solid;
+  padding-right: 0px;
+  padding-top: 2px;
+  min-height: 22px;
+}
+
+#app-token.error {
+  border: 1px red solid;
+}
+
+.app-token-info {
+  position: absolute;
+  right: 16px;
+  width: 14px;
+  height: 14px;
+  display: flex;
+}
+
+#app-token-info-ok:hover #app-token-info-box {
+  opacity: 1;
+}
+
+#app-token-info-box {
+  position: absolute;
+  top: 24px;
+  right: -2px;
+  background-color: var(--sdpi-background);
+  border: 2px solid var(--sdpi-buttonbordercolor);
+  border-radius: 5px;
+  min-width: 300px;
+  min-height: 100px;
+  max-width: 300px;
+  max-height: 200px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+#app-token-info-box-image {
+  width: 100%;
+  max-width: 300px;
+}
+#app-token-info-box-name {
+  width: 100%;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+  text-align: center;
+}
+
+#message-error,
+#message-info {
+  text-align: center;
+  width: 250px;
+  margin: auto;
+}
+
+#message-error {
+  color: red;
+}
+
+select,
+option {
+  cursor: pointer;
+  font-family: Arial !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+}
+optgroup {
+  font-family: Arial !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: azure;
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+
+
+#app-payload-field-container {
+
+}
+
+#app-payload-field-text {
+  font-family: Arial;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+#app-payload-field-textarea {
+  font-family: Arial;
+  font-weight: 400;
+  height: 120px;
+  margin-left: 1px;
+  margin-right: 0px;
+  width: 223px;
+  font-size: 13px;
+}
+
+
+#app-payload-json-container {
+  align-items: flex-start;
+}
+
+#app-payload-json {
+  font-family: Arial;
+  font-weight: 400;
+  flex: 1 1 120px;
+  margin-left: 1px;
+  margin-right: 0px;
+  width: 223px;
+  font-size: 13px;
+}
+
+#app-payload-json.invalid {
+  border: red 1px solid;
+}
+#app-payload-json.valid {
+  border: transparent 1px solid;
+}
+
+
+#app-payload-select-field-operation-textarea-element {
+  font-family: Arial;
+  font-weight: 400;
+  height: 100px;
+}
+
+#app-payload-select-field-operation-color-element {
+  margin: 0px;
+  padding: 0px;
+  margin-left: 3px;
+  width: 30px;
+  height: 32px;
+}
+
+.value-message {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.json-field-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.refresh-content-button {
+  width: 150px;
+  cursor: pointer;
+  margin-top: 3px;
+}
+
+#customContextMenu {
+  position: absolute;
+  display: none;
+  background-color: var(--sdpi-background);
+  border: 2px solid var(--sdpi-buttonbordercolor);
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  z-index: 9999;
+  min-width: 140px;
+  padding: 4px 0;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+
+#customContextMenu div {
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+#customContextMenu div:hover {
+  background-color: #150e0e;
+}

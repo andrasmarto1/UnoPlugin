@@ -1,0 +1,24 @@
+{
+	"extends": "@tsconfig/node20/tsconfig.json",
+	"compilerOptions": {
+		"esModuleInterop": true,
+  	"allowSyntheticDefaultImports": true,
+		"customConditions": [
+			"node"
+		],
+		"lib": ["ES2022", "DOM"],
+		"module": "ES2022",
+		"moduleResolution": "bundler",
+		"noImplicitOverride": true,
+		"strict": true,
+		"baseUrl": ".",
+		"skipLibCheck": true,
+		"resolveJsonModule": true
+	},
+	"include": [
+		"src/**/*.ts",
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

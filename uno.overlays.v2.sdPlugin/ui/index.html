@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Uno Overlays Settings</title>
+    <link rel="stylesheet" href="css/sdpi.css" />
+    <link rel="stylesheet" href="css/uno.css" />
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+
+<body>
+    <!--
+        Learn more about property inspector components at https://sdpi-components.dev/docs/components
+    -->
+    <div id= "sdpi-wrapper" class="sdpi-wrapper">
+        <div class="sdpi-item app-token-entry">
+          <div class="sdpi-item-label">Uno Token</div>
+          <sdpi-textfield
+            id="app-token"
+            class="sdpi-item-value"
+            setting="appToken"
+            pattern="/^[a-z ,.'-]+$/i"
+            placeholder="Please enter Uno Token"
+            onkeypress="getAppJson(event)"
+            onblur="getAppJson()"
+            required
+          />
+          <!-- <sdpi-item>
+            <sdpi-button
+              onClick="SDPIComponents.streamDeckClient.send('sendToPlugin', {event: 'reload'});"
+              >Refresh</sdpi-button
+            >
+          </sdpi-item> -->
+          <div id="customContextMenu">
+            <div onclick="copyToken()">Copy</div>
+            <div onclick="pasteToken()">Paste</div>
+            <div onclick="clearToken()">Clear</div>
+          </div>
+          
+          <script>
+            const input = document.getElementById("app-token");
+            const menu = document.getElementById("customContextMenu");
+            const plRoot = document.getElementById("sdpi-wrapper");
+          
+            // Show menu on right-click in the input
+            input.addEventListener("contextmenu", (e) => {
+              e.preventDefault();
+  
+              const menuWidth = menu.offsetWidth;
+              const menuHeight = menu.offsetHeight;
+  
+              const mouseX = e.clientX;
+              const mouseY = e.clientY;
+  
+              const centeredX = mouseX - menuWidth / 2;
+              const centeredY = mouseY - menuHeight / 2;
+  
+              menu.style.left = `${Math.max(10, Math.min(centeredX, window.innerWidth - menuWidth - 10))}px`;
+              menu.style.top = `${Math.max(10, Math.min(centeredY, window.innerHeight - menuHeight - 10))}px`;
+              menu.style.display = "block";
+            });
+          
+            document.addEventListener("mousedown", (e) => {
+              const clickedInsideMenu = menu.contains(e.target);
+              const clickedInAppTokenInput = input.contains(e.target);
+              const clickedInsidePlugin = plRoot.contains(e.target);
+  
+              if (!clickedInsideMenu || !clickedInsidePlugin) {
+                menu.style.display = "none";
+              }
+            });
+          
+            function copyToken() {
+              navigator.clipboard.writeText(input.value)
+                .catch(err => console.error("Copy failed:", err));
+              menu.style.display = "none";
+            }
+          
+            function pasteToken() {
+              navigator.clipboard.readText()
+                .then(text => {
+                  input.value = text;
+                  input.focus();
+                })
+                .catch(err => console.error("Paste failed:", err));
+              menu.style.display = "none";
+            }
+          
+            function clearToken() {
+              input.value = "";
+              input.focus();
+              menu.style.display = "none";
+            }
+          </script>
+  
+          <div class="app-token-info">
+            <div id="app-token-info-error" class="hidden">
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 24 24"
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                stroke="red"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                fill="none"
+                color="#000000"
+              >
+                <path d="M12 8L12 13" />
+                <line x1="12" y1="16" x2="12" y2="16" />
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+            </div>
+  
+            <div id="app-token-info-busy" class="hidden">
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="-2 -2 42 42"
+                xmlns="http://www.w3.org/2000/svg"
+                stroke="var(--sdpi-color)"
+              >
+                <g fill="none" fill-rule="evenodd">
+                  <g transform="translate(1 1)" stroke-width="4">
+                    <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+                    <path d="M36 18c0-9.94-8.06-18-18-18">
+                      <animateTransform
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 18 18"
+                        to="360 18 18"
+                        dur="1s"
+                        repeatCount="indefinite"
+                      />
+                    </path>
+                  </g>
+                </g>
+              </svg>
+            </div>
+  
+            <div id="app-token-info-ok" class="hidden">
+              <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                width="100%"
+                height="100%"
+                viewBox="0 0 496.304 496.303"
+                xml:space="preserve"
+                stroke="var(--sdpi-color)"
+                fill="var(--sdpi-color)"
+              >
+                <g>
+                  <path
+                    d="M248.146,0C111.314,0,0,111.321,0,248.152c0,136.829,111.314,248.151,248.146,248.151
+          c136.835,0,248.158-111.322,248.158-248.151C496.304,111.321,384.98,0,248.146,0z M248.146,472.093
+          c-123.473,0-223.935-100.459-223.935-223.941c0-123.479,100.462-223.941,223.935-223.941
+          c123.488,0,223.947,100.462,223.947,223.941C472.093,371.634,371.634,472.093,248.146,472.093z M319.536,383.42v32.852
+          c0,1.383-1.123,2.494-2.482,2.494H196.45c-1.374,0-2.482-1.117-2.482-2.494V383.42c0-1.372,1.114-2.482,2.482-2.482h34.744V205.831
+          h-35.101c-1.375,0-2.468-1.111-2.468-2.474v-33.6c0-1.38,1.1-2.479,2.468-2.479h82.293c1.371,0,2.482,1.105,2.482,2.479v211.181
+          h36.186C318.413,380.938,319.536,382.048,319.536,383.42z M209.93,105.927c0-20.895,16.929-37.829,37.829-37.829
+          c20.886,0,37.826,16.935,37.826,37.829s-16.94,37.829-37.826,37.829C226.853,143.756,209.93,126.822,209.93,105.927z"
+                  />
+                </g>
+              </svg>
+              <div id="app-token-info-box">
+                <img id="app-token-info-box-image" />
+                <div id="app-token-info-box-name"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <sdpi-item class="sdpi-item hidden" id="app-command-select-container" label="Action">
+          <sdpi-select
+            class="sdpi-item-value select"
+            id="app-command-select-element"
+            onchange="changeAppCommand()"
+            setting="appCommandObject"
+            datasource="changeAppCommand"
+            loading="Fetching overlay commands..."
+          ></sdpi-select>
+        </sdpi-item>
+  
+        <div class="hidden" id="message-error">
+          <p id="message-error-content"></p>
+        </div>
+  
+        <div class="hidden" id="message-info">
+          <p>
+            Check out the
+            <a href="https://www.overlays.uno/streamdeck-help" target="_blank">Uno Stream Deck help page</a>
+            for more information.
+          </p>
+        </div>
+  
+        <sdpi-item class="sdpi-item hidden" id="app-overlay-select-container" label="Overlay">
+          <sdpi-select
+            class="sdpi-item-value select"
+            id="app-overlay-select-element"
+            onchange="changeOverlay()"
+          ></sdpi-select>
+        </sdpi-item>
+  
+        <div class="sdpi-item hidden" id="app-payload-select-field-container">
+          <div class="sdpi-item-label">Field</div>
+          <select
+            class="sdpi-item-value select"
+            id="app-payload-select-field-element"
+            onchange="changeOverlayField()"
+          ></select>
+          <div class="value-message hidden" id="app-payload-select-field-message">
+            No supported field type found
+          </div>
+        </div>
+  
+        <div
+          class="sdpi-item hidden"
+          id="app-payload-select-field-operation-container"
+        >
+          <div class="sdpi-item-label">Operation</div>
+          <select
+            class="sdpi-item-value select"
+            id="app-payload-select-field-operation-element"
+            onchange="changeOverlayFieldOperation()"
+          ></select>
+        </div>
+  
+        <div
+          class="sdpi-item hidden"
+          id="app-payload-select-field-operation-value-container"
+        >
+          <div class="sdpi-item-label">Value</div>
+          <select
+            class="sdpi-item-value select"
+            id="app-payload-select-field-operation-select-element"
+            onchange="changeOverlayFieldOperationValue()"
+          ></select>
+          <input
+            class="sdpi-item-value hidden"
+            type="field"
+            id="app-payload-select-field-operation-text-element"
+            onchange="changeOverlayFieldOperationValue()"
+          />
+          <input
+            class="sdpi-item-value hidden"
+            type="color"
+            id="app-payload-select-field-operation-color-element"
+            onchange="changeOverlayFieldOperationValue()"
+          />
+          <input
+            class="sdpi-item-value hidden"
+            type="number"
+            id="app-payload-select-field-operation-number-element"
+            onchange="changeOverlayFieldOperationValue()"
+          />
+          <input
+            class="sdpi-item-value hidden"
+            type="checkbox"
+            id="app-payload-select-field-operation-checkbox-element"
+            onchange="changeOverlayFieldOperationValue()"
+          />
+          <label
+            class="hidden"
+            for="app-payload-select-field-operation-checkbox-element"
+            id="app-payload-select-field-operation-checkbox-label"
+            ><span></span
+          ></label>
+          <textarea
+            class="sdpi-item-value hidden"
+            id="app-payload-select-field-operation-textarea-element"
+            onchange="changeOverlayFieldOperationValue()"
+          ></textarea>
+        </div>
+  
+        <div class="sdpi-item hidden" id="app-payload-json-container">
+          <div class="sdpi-item-label">Content JSON</div>
+          <div class="json-field-container">
+            <textarea
+              class="sdpi-item-value"
+              id="app-payload-json"
+              onkeyup="changeAppPayload()"
+              onchange="changeAppPayload()"
+            ></textarea>
+            <button class="refresh-content-button" onclick="refreshContent()">
+              Fetch content JSON
+            </button>
+          </div>
+        </div>
+  
+        <div class="sdpi-item hidden" id="app-payload-field-container">
+          <div class="sdpi-item-label">Value</div>
+          <select
+            class="sdpi-item-value select"
+            id="app-payload-field-select"
+            onchange="changeAppPayload()"
+          ></select>
+          <input
+            class="sdpi-item-value"
+            type="field"
+            id="app-payload-field-text"
+            onchange="changeAppPayload()"
+          />
+          <textarea
+            class="sdpi-item-value"
+            id="app-payload-field-textarea"
+            onkeyup="changeAppPayload()"
+            onchange="changeAppPayload()"
+          ></textarea>
+          <input
+            class="sdpi-item-value hidden"
+            type="number"
+            id="app-payload-field-number"
+            onchange="changeAppPayload()"
+          />
+        </div>
+      </div>
+  
+      <div class="sdpi-info-label hidden" style="top: -1000" value=""></div>
+  
+      <script src="common_pi.js"></script>
+      <script src="index.js"></script>
+      <script src="sdpi-components.js"></script>
+</body>
+
+</html>
