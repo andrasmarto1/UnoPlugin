@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html>
-
-<head lang="en">
-    <title>Uno Overlays Settings</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <title>live.uno.overlays Property Inspector</title>
     <link rel="stylesheet" href="css/sdpi.css" />
     <link rel="stylesheet" href="css/uno.css" />
-    <meta charset="utf-8" />
-    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <!--
         Learn more about property inspector components at https://sdpi-components.dev/docs/components
     -->
@@ -20,12 +24,11 @@
             id="app-token"
             class="sdpi-item-value"
             setting="appToken"
-            pattern="/^[a-z ,.'-]+$/i"
             placeholder="Please enter Uno Token"
-            onkeypress="getAppJson(event)"
+            onkeydown="getAppJson(event)"
             onblur="getAppJson()"
-            required
-          />
+          ></sdpi-textfield>
+          
           <!-- <sdpi-item>
             <sdpi-button
               onClick="SDPIComponents.streamDeckClient.send('sendToPlugin', {event: 'reload'});"
@@ -156,13 +159,13 @@
                 <g>
                   <path
                     d="M248.146,0C111.314,0,0,111.321,0,248.152c0,136.829,111.314,248.151,248.146,248.151
-          c136.835,0,248.158-111.322,248.158-248.151C496.304,111.321,384.98,0,248.146,0z M248.146,472.093
-          c-123.473,0-223.935-100.459-223.935-223.941c0-123.479,100.462-223.941,223.935-223.941
-          c123.488,0,223.947,100.462,223.947,223.941C472.093,371.634,371.634,472.093,248.146,472.093z M319.536,383.42v32.852
-          c0,1.383-1.123,2.494-2.482,2.494H196.45c-1.374,0-2.482-1.117-2.482-2.494V383.42c0-1.372,1.114-2.482,2.482-2.482h34.744V205.831
-          h-35.101c-1.375,0-2.468-1.111-2.468-2.474v-33.6c0-1.38,1.1-2.479,2.468-2.479h82.293c1.371,0,2.482,1.105,2.482,2.479v211.181
-          h36.186C318.413,380.938,319.536,382.048,319.536,383.42z M209.93,105.927c0-20.895,16.929-37.829,37.829-37.829
-          c20.886,0,37.826,16.935,37.826,37.829s-16.94,37.829-37.826,37.829C226.853,143.756,209.93,126.822,209.93,105.927z"
+                    c136.835,0,248.158-111.322,248.158-248.151C496.304,111.321,384.98,0,248.146,0z M248.146,472.093
+                    c-123.473,0-223.935-100.459-223.935-223.941c0-123.479,100.462-223.941,223.935-223.941
+                    c123.488,0,223.947,100.462,223.947,223.941C472.093,371.634,371.634,472.093,248.146,472.093z M319.536,383.42v32.852
+                    c0,1.383-1.123,2.494-2.482,2.494H196.45c-1.374,0-2.482-1.117-2.482-2.494V383.42c0-1.372,1.114-2.482,2.482-2.482h34.744V205.831
+                    h-35.101c-1.375,0-2.468-1.111-2.468-2.474v-33.6c0-1.38,1.1-2.479,2.468-2.479h82.293c1.371,0,2.482,1.105,2.482,2.479v211.181
+                    h36.186C318.413,380.938,319.536,382.048,319.536,383.42z M209.93,105.927c0-20.895,16.929-37.829,37.829-37.829
+                    c20.886,0,37.826,16.935,37.826,37.829s-16.94,37.829-37.826,37.829C226.853,143.756,209.93,126.822,209.93,105.927z"
                   />
                 </g>
               </svg>
@@ -174,16 +177,14 @@
           </div>
         </div>
   
-        <sdpi-item class="sdpi-item hidden" id="app-command-select-container" label="Action">
-          <sdpi-select
+        <div class="sdpi-item hidden" id="app-command-select-container">
+          <div class="sdpi-item-label">Action</div>
+          <select
             class="sdpi-item-value select"
             id="app-command-select-element"
             onchange="changeAppCommand()"
-            setting="appCommandObject"
-            datasource="changeAppCommand"
-            loading="Fetching overlay commands..."
-          ></sdpi-select>
-        </sdpi-item>
+          ></select>
+        </div>
   
         <div class="hidden" id="message-error">
           <p id="message-error-content"></p>
@@ -197,13 +198,14 @@
           </p>
         </div>
   
-        <sdpi-item class="sdpi-item hidden" id="app-overlay-select-container" label="Overlay">
-          <sdpi-select
+        <div class="sdpi-item hidden" id="app-overlay-select-container">
+          <div class="sdpi-item-label">Overlay</div>
+          <select
             class="sdpi-item-value select"
             id="app-overlay-select-element"
             onchange="changeOverlay()"
-          ></sdpi-select>
-        </sdpi-item>
+          ></select>
+        </div>
   
         <div class="sdpi-item hidden" id="app-payload-select-field-container">
           <div class="sdpi-item-label">Field</div>
@@ -321,9 +323,14 @@
   
       <div class="sdpi-info-label hidden" style="top: -1000" value=""></div>
   
-      <script src="common_pi.js"></script>
-      <script src="index.js"></script>
+      <!-- <script src="common_pi.js"></script> -->
+      
       <script src="sdpi-components.js"></script>
-</body>
+      <script src="pi.js"></script>
+
+      <script>
+        SDPIComponents.streamDeckClient.didReceiveSettings.subscribe(console.log);
+      </script>
+  </body>
 
 </html>

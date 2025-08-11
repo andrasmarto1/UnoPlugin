@@ -1,5 +1,6 @@
-import tinycolor, { ColorInput } from "tinycolor2";
-import streamDeck from '@elgato/streamdeck';
+import { colord } from "colord";
+//import streamDeck from '@elgato/streamdeck';
+//const streamDeckClient = SDPIComponents.streamDeckClient;
 
 /**
  * JSON object.
@@ -59,7 +60,7 @@ type ControlSettings = {
   appOverlayFieldOperationValue: string | number | boolean | { type: "solid"; solidColor: string } | null,
   appOverlayFieldOperationId: string | null,
   appOverlayFieldOperationValueElement: HTMLElement | null,
-
+  commandMap: Record<string, Entry>
 };
 
 type CommandArgument = {
@@ -92,6 +93,8 @@ type ColorValue = {
   g: number;
   b: number;
 };
+
+type ColorInput = string | { r: number; g: number; b: number; a?: number } | { h: number; s: number; l: number; a?: number };
 
 type ModelType = "number" | "color" | string;
 
@@ -155,15 +158,44 @@ let settings: ControlSettings = {
   appOverlayFieldId: "",
   appOverlayFieldOperationValue: null,
   appOverlayFieldOperationId: "",
-  appOverlayFieldOperationValueElement: null
+  appOverlayFieldOperationValueElement: null,
+  commandMap: {}
 };
 
+window.SDPIComponents.streamDeckClient.getConnectionInfo().then(
+  console.log,
+  setup
+);
+
+window.uno = {
+  getAppJson,
+  changeAppCommand,
+  changeOverlay,
+  changeOverlayField,
+  changeOverlayFieldOperation,
+  changeOverlayFieldOperationValue,
+  changeAppPayload,
+  refreshContent,
+}
+
+async function setup(): Promise<void> {
+
+  rebuildUI();
+
+  if (settings.appToken !== "") {
+    verifyToken();
+    fetchAppCustomization();
+    fetchAppOverlays();
+    fetchAppOverlayPayload();
+  }
+  return;
+}
 
 function verifyToken(): void {
   settings.validateAppStatus = "busy";
 
   const url = settings.baseUrl + settings.appToken;
-
+  console.log(url);
   fetch(url, {
     method: "GET",
     redirect: "follow",
@@ -175,6 +207,7 @@ function verifyToken(): void {
     }
     return response.json();
   }).then((json) => {
+    console.log(json);
     settings.appName = json.name || "";
     settings.appThumbnail = json.thumbnail || "";
     settings.appDatastoreId = json.datastoreId || "";
@@ -219,8 +252,8 @@ function fetchAppApi(): void {
   })
     .then((response) => {
       if (!response.ok) {
-        //rebuildUI();
-        propogateError(response.status, "HTTP error");
+        rebuildUI();
+        propogateError(response.status, "HTTP Error");
       }
       return response.json();
     })
@@ -232,6 +265,19 @@ function fetchAppApi(): void {
       // this.hasOverlaySelection = this.appCommandList?.some(command =>
       // 	command.arguments?.some(argument => argument.type === "overlaySelection")  ASK HUBERT ABOUT THIS
       // ) ?? false;
+
+      settings.hasOverlaySelection = false;
+      if (settings.appCommandList && settings.appCommandList.length !== 0) {
+        settings.appCommandList.forEach((command) => {
+          if ("arguments" in command && command.arguments && command.arguments.length) {
+            command.arguments.forEach((argument) => {
+              if (argument.type === "overlaySelection") {
+                settings.hasOverlaySelection = true;
+              }
+            });
+          }
+        });
+      }
 
       rebuildUI();
       fetchAppCustomization();
@@ -367,6 +413,7 @@ function rebuildUI(): void {
   // } else {
   // 	hideElement("message-error");
   // }
+  console.log("Rebuild");
 
   removeAndAddClass("app-token-info-error", "", "hidden");
   removeAndAddClass("app-token-info-busy", "", "hidden");
@@ -421,6 +468,10 @@ function rebuildUI(): void {
     setElementContent("app-token-info-box-name", settings.appName);
     let el = document.getElementById("app-token-info-box-image");
     
+    
+    if (settings.appThumbnail && settings.appThumbnail.indexOf("https://") === -1) {
+      settings.appThumbnail = "https:" + settings.appThumbnail;
+    }
     // replace fit-in/150x150 with fit-in/200x200
     if (el !== null) {
       (el as HTMLImageElement).src = settings.appThumbnail.replace("fit-in/150x150", "fit-in/300x300");
@@ -598,7 +649,7 @@ function fetchAppOverlayPayload(): void {
 
 function save(): void {
   console.log("saving...");
-
+  
   let payload: savePayload = {
     command: "",
     token: "",
@@ -629,12 +680,16 @@ function save(): void {
 
   payload.appDatastoreId = settings.appDatastoreId; //unfinished
 
-  streamDeck.plugin.sendToPlugin(payload);
+  window.SDPIComponents.streamDeckClient.send("sendToPlugin", payload);
 };
 
 function rebuildCommandList(): void {
   const elSelect = document.getElementById("app-command-select-element");
-  if (!settings.appCommandList || !settings.appCommandList.length) {
+
+  (elSelect as HTMLSelectElement).innerHTML = "";
+  (elSelect as HTMLSelectElement).disabled = false;
+  settings.commandMap = {};
+  if (!settings.appCommandList || settings.appCommandList.length === 0) {
     // set the current command so we can see it in the UI while we load the API data from the server
     let option: HTMLOptionElement = document.createElement("option");
     if(settings.appCommandObject !== undefined && "command" in settings.appCommandObject) {
@@ -654,7 +709,7 @@ function rebuildCommandList(): void {
     }
 
     // add the current value of the command and disable the drop down box.
-    (elSelect as HTMLSelectElement).add(option, null);
+    (elSelect as HTMLSelectElement).appendChild(option);
     (elSelect as HTMLSelectElement).disabled = true;
   } else {
     if (elSelect === null) {
@@ -703,7 +758,7 @@ function rebuildCommandList(): void {
       } 
     });
     if (selectedItem !== undefined && 
-        "group" in selectedItem
+        "command" in selectedItem
       ) 
     {
       (elSelect as HTMLSelectElement).value = JSON.stringify(selectedItem);
@@ -721,6 +776,7 @@ function rebuildCommandList(): void {
   }
 
   showElement("app-command-select-container");
+  
 };
 
 function rebuildOverlayList(): void {
@@ -793,7 +849,7 @@ function rebuildOverlayList(): void {
         (elSelect as HTMLSelectElement).value = selectedId;
       } else {
         (elSelect as HTMLSelectElement).value = filteredAppOverlayList[0].id;
-        settings  .appOverlayId = filteredAppOverlayList[0].id;
+        settings.appOverlayId = filteredAppOverlayList[0].id;
       }
     }
   }
@@ -1091,7 +1147,7 @@ function rebuildOverlayFieldOperationsValue(): void {
       if (selectedField.type === "color" || selectedField.type === "gradient") {
         if (settings.appOverlayFieldOperationValueElement === null) return;
         (settings.appOverlayFieldOperationValueElement as HTMLInputElement).value =
-          tinycolor(displayValue as ColorInput).toHexString();
+          colord(displayValue as ColorInput).toHslString();
       } else {
         (settings.appOverlayFieldOperationValueElement as HTMLInputElement).value = 
           displayValue as string;
@@ -1265,11 +1321,20 @@ function changeAppPayload(): void {
 
 function changeAppCommand(): void {
   let cmd: Entry | undefined = undefined;
+  console.log("ChangeAppCommand");
+  console.log((document.getElementById("app-command-select-element") as HTMLOptionElement).value);
   try {
     cmd = JSON.parse(
       (document.getElementById("app-command-select-element") as HTMLSelectElement).value
     );
-  } catch {}
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("An error occurred: ", error.message);
+    } else if (typeof error === "string") {
+      console.error(error);
+    }
+  }
+  console.log(cmd);
 
   if (cmd === undefined) {
     return;

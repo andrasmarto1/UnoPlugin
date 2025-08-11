@@ -1,6 +1,6 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "emitDeclarationOnly": false,
     "customConditions": [
       "browser"
     ],
@@ -11,13 +11,12 @@
       "es2022",
       "DOM.Iterable"
     ],
-    "module": "es2022",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "target": "es2022",
-    "paths": {
-      "@elgato/streamdeck": ["node_modules/@elgato/streamdeck/dist/browser.d.ts"]
-    }
+    "types": [],
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "./**/*.ts",

@@ -8,12 +8,13 @@ import alias from '@rollup/plugin-alias';
 
 const isWatching = !!process.env.ROLLUP_WATCH;
 const sdPlugin = "uno.overlays.v2.sdPlugin";
-// @type {import('rollup').RollupOptions}
+//@type {import('rollup').RollupOptions}
 
 const config = [{
-    input: "src/plugin.ts",
+    input: "src/plugin/plugin.ts",
     output: {
         file: `${sdPlugin}/bin/plugin.js`,
+				format: "cjs",
         sourcemap: isWatching,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
             return url.pathToFileURL(path.resolve(path.dirname(sourcemapPath), relativeSourcePath)).href;
@@ -35,7 +36,10 @@ const config = [{
             exportConditions: ["node"],
             preferBuiltins: true
         }),
-        commonjs(),
+        commonjs({
+					transformMixedEsModules: true,
+            include: ['node_modules/**'],
+				}),
         !isWatching && terser(),
         {
             name: "emit-module-package-file",
@@ -45,20 +49,25 @@ const config = [{
         }
     ]
 }, {
-		external: ['@elgato/streamdeck'],
-    input: `${sdPlugin}/ui/pi.ts`,
+    input: `src/ui/pi.ts`,
     output: {
         file: `${sdPlugin}/ui/pi.js`,
         sourcemap: isWatching,
-				format: 'iife',
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
             return url.pathToFileURL(path.resolve(path.dirname(sourcemapPath), relativeSourcePath)).href;
-        }
+        },
+				
     },
+		// treeshake: {
+		// 	moduleSideEffects: false,
+		// 	propertyReadSideEffects: false,
+		// 	// More conservative tree-shaking
+		// 	unknownGlobalSideEffects: false
+		// },
     plugins: [
         typescript({
             mapRoot: isWatching ? "./" : undefined,
-            tsconfig: "uno.overlays.v2.sdPlugin/ui/tsconfig.json"
+            tsconfig: `src/ui/tsconfig.json`,
         }),
         nodeResolve({
             browser: true,
@@ -66,7 +75,7 @@ const config = [{
             preferBuiltins: true
         }),
         commonjs(),
-        //!isWatching && terser(),
+        !isWatching && terser(),
     ],
 }];
 

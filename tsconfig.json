@@ -6,7 +6,7 @@
 		"customConditions": [
 			"node"
 		],
-		"lib": ["ES2022", "DOM"],
+		"lib": ["ES2023", "DOM", "DOM.Iterable"],
 		"module": "ES2022",
 		"moduleResolution": "bundler",
 		"noImplicitOverride": true,
@@ -16,9 +16,10 @@
 		"resolveJsonModule": true
 	},
 	"include": [
-		"src/**/*.ts",
+		"src/plugin/**/*.ts",
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"uno.overlays.v2.sdPlugin/src/ui/*.ts"
 	]
 }
